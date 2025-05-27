@@ -1,103 +1,142 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useIntegrationApp } from '@integration-app/react';
+
+// ------------- zod guard for the form -------------
+const schema = z.object({
+  name: z.string().min(3),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  company: z.string().min(2),
+  pronouns: z.string().max(30),
+});
+type FormVals = z.infer<typeof schema>;
+// --------------------------------------------------
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const integrationApp = useIntegrationApp();
+  const [connector, setConnector] = useState<'hubspot' | 'pipedrive' | null>(
+    null
+  );
+  const [status, setStatus] = useState<'idle' | 'connecting' | 'connected'>(
+    'idle'
+  );
+  const [running, setRunning] = useState(false);
+  const [link, setLink] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormVals>({ resolver: zodResolver(schema) });
+
+  // -------- 1. Connect buttons --------
+  const connect = async (key: 'hubspot' | 'pipedrive') => {
+    setConnector(key);
+    setStatus('connecting');
+    try {
+      await integrationApp.integration(key).openNewConnection();
+      setStatus('connected');
+    } catch (e) {
+      alert('Connection cancelled');
+      setStatus('idle');
+      setConnector(null);
+    }
+  };
+
+  // -------- 2. Run flow on submit -------
+  const onSubmit = async (data: FormVals) => {
+    if (!connector || status !== 'connected')
+      return alert('Please connect a CRM first');
+    setRunning(true);
+    setLink(null);
+    try {
+      const result = await integrationApp
+        .connection(connector)
+        .flow('create-crm-contact')
+        .run({ input: data });
+
+      // assume the flow returns {contactUrl}
+      setLink(result.output.contactUrl ?? null);
+    } catch (e: any) {
+      alert(e.message ?? 'Flow failed');
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  return (
+    <main className="max-w-md mx-auto p-6 space-y-6">
+      {/* step 1 – connect */}
+      {!connector || status !== 'connected' ? (
+        <>
+          <h2 className="text-lg font-semibold">Connect your CRM</h2>
+          <button
+            onClick={() => connect('hubspot')}
+            className="bg-orange-600 text-white px-4 py-2 rounded mr-2"
+            disabled={status === 'connecting'}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {status === 'connecting' && connector === 'hubspot'
+              ? 'Connecting…'
+              : 'Connect HubSpot'}
+          </button>
+          <button
+            onClick={() => connect('pipedrive')}
+            className="bg-green-600 text-white px-4 py-2 rounded"
+            disabled={status === 'connecting'}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+            {status === 'connecting' && connector === 'pipedrive'
+              ? 'Connecting…'
+              : 'Connect Pipedrive'}
+          </button>
+        </>
+      ) : (
+        <>
+          <p className="text-emerald-700">
+            Connected to {connector}. Fill the form:
+          </p>
+
+          {/* step 2 – form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+            <input placeholder="Full name" {...register('name')} />
+            <p className="text-red-600 text-sm">{errors.name?.message}</p>
+
+            <input placeholder="Email" {...register('email')} />
+            <p className="text-red-600 text-sm">{errors.email?.message}</p>
+
+            <input placeholder="Phone" {...register('phone')} />
+
+            <input placeholder="Company" {...register('company')} />
+            <p className="text-red-600 text-sm">{errors.company?.message}</p>
+
+            <input placeholder="Pronouns" {...register('pronouns')} />
+
+            <button
+              type="submit"
+              disabled={running}
+              className="w-full bg-blue-600 text-white py-2 rounded"
+            >
+              {running ? 'Creating…' : 'Create Contact'}
+            </button>
+          </form>
+        </>
+      )}
+
+      {/* step 3 – result */}
+      {link && (
         <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          href={link}
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noreferrer"
+          className="block text-center text-emerald-700 underline"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+          View contact in CRM ↗
         </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      )}
+    </main>
   );
 }

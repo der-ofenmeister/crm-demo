@@ -9,7 +9,7 @@ export function IntegrationWrapper({
 }) {
   return (
     <IntegrationAppProvider
-      workspaceId={process.env.NEXT_PUBLIC_INT_APP_WORKSPACE_ID!}
+      token={process.env.NEXT_PUBLIC_INT_APP_WORKSPACE_ID!}
     >
       {children}
     </IntegrationAppProvider>
