@@ -1,7 +1,7 @@
-// postcss.config.mjs  (ECMAScript module)
+// postcss.config.mjs (ECMAScript module)
 export default {
   plugins: {
-    tailwindcss: {},
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
 };

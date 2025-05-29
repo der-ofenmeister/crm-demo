@@ -3,9 +3,11 @@ module.exports = {
     content: [
         "./src/app/**/*.{js,jsx,ts,tsx,mdx}",
         "./src/components/**/*.{js,jsx,ts,tsx,mdx}",
-        // if you keep pages under /src/pages instead of /src/app, add:
-        // './src/pages/**/*.{js,jsx,ts,tsx,mdx}',
+        "./src/pages/**/*.{js,jsx,ts,tsx,mdx}",
+        // Add any other directories where you use Tailwind classes
     ],
-    theme: { extend: {} },
+    theme: { 
+        extend: {} 
+    },
     plugins: [],
 };
