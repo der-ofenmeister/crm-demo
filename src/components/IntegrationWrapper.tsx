@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { IntegrationAppProvider } from '@integration-app/react';
+import { IntegrationAppProvider } from "@integration-app/react";
 
 export function IntegrationWrapper({
-  children,
+    children,
+    token,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
+    token: string;
 }) {
-  return (
-    <IntegrationAppProvider
-      token={process.env.NEXT_PUBLIC_INT_APP_WORKSPACE_ID!}
-    >
-      {children}
-    </IntegrationAppProvider>
-  );
+    return (
+        <IntegrationAppProvider token={token}>
+            {children}
+        </IntegrationAppProvider>
+    );
 }
