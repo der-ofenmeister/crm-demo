@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useIntegrationApp } from '@integration-app/react';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';   // 🧩  npm i @heroicons/react
+import { ArrowPathIcon } from '@heroicons/react/24/outline'; 
 
 /* -------------------- schema -------------------- */
 const schema = z.object({
@@ -34,7 +34,7 @@ export default function Home() {
   const {
     register,
     handleSubmit,
-    reset,
+    reset,  
     formState: { errors },
   } = useForm<FormVals>({ resolver: zodResolver(schema) });
 
