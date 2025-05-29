@@ -5,204 +5,184 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useIntegrationApp } from '@integration-app/react';
-import { ArrowPathIcon } from '@heroicons/react/24/outline'; 
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
-/* -------------------- schema -------------------- */
 const schema = z.object({
   name: z.string().min(3, 'Name is required'),
   email: z.string().email(),
   phone: z.string().optional(),
   company: z.string().min(2, 'Company is required'),
-  pronouns: z.string().max(30),
+  pronouns: z.string().max(30).optional(),
 });
 type FormVals = z.infer<typeof schema>;
-/* ------------------------------------------------ */
 
 export default function Home() {
-  const integrationApp = useIntegrationApp();
+  const intApp = useIntegrationApp();
 
-  const [connector, setConnector] = useState<'hubspot' | 'pipedrive' | null>(
-    null
-  );
-  const [status, setStatus] = useState<'idle' | 'connecting' | 'connected'>(
-    'idle'
-  );
-  const [running, setRunning] = useState(false);
-  const [link, setLink] = useState<string | null>(null);
-  const [runId, setRunId] = useState<string | null>(null);
+  const [crm, setCrm] = useState<'hubspot' | 'pipedrive' | null>(null);
+  const [connecting, setConnecting] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [runJson, setRunJson] = useState<any | null>(null);
 
   const {
     register,
     handleSubmit,
-    reset,  
+    reset,
     formState: { errors },
   } = useForm<FormVals>({ resolver: zodResolver(schema) });
 
-  /* ------------ 1. Connect CRM ------------ */
+  /* ---------- connect ---------- */
   const connect = async (key: 'hubspot' | 'pipedrive') => {
-    setConnector(key);
-    setStatus('connecting');
+    setConnecting(true);
+    setCrm(key);
     try {
-      await integrationApp.integration(key).openNewConnection();
-      setStatus('connected');
+      await intApp.integration(key).openNewConnection();
     } catch {
-      setStatus('idle');
-      setConnector(null);
-    }
-  };
-
-  /* ------------ 2. Send flow --------------- */
-  const onSubmit = async (data: FormVals) => {
-    if (!connector || status !== 'connected') {
-      return alert('Please connect a CRM first.');
-    }
-    setRunning(true);
-    setLink(null);
-    setRunId(null);
-
-    try {
-      const { output, runId } = await integrationApp
-        .connection(connector)
-        .flow('create-crm-contact')
-        .run({ input: data });
-
-      setLink(output?.contactUrl ?? null);
-      setRunId(runId ?? null);
-      reset();                         // 🧹 clear the form
-    } catch (e: any) {
-      alert(e.message ?? 'Flow failed');
+      setCrm(null);
     } finally {
-      setRunning(false);
+      setConnecting(false);
     }
   };
 
-  /* ------------ helpers --------------- */
+  /* ---------- submit ---------- */
+  const onSubmit = async (data: FormVals) => {
+    if (!crm) return alert('Connect a CRM first');
+    setSending(true);
+    setRunJson(null);
+    try {
+      const res = await intApp.connection(crm).flow('create-crm-contact').run({
+        input: data,
+      });
+      setRunJson(res);
+      reset();
+    } catch (e: any) {
+      alert(e.message ?? 'Error');
+    } finally {
+      setSending(false);
+    }
+  };
+
   const Spinner = (
-    <ArrowPathIcon className="h-4 w-4 animate-spin inline-block mr-2" />
+    <ArrowPathIcon className="h-5 w-5 animate-spin mr-2 shrink-0" />
   );
 
-  const sendLabel =
-    running
-      ? 'Sending…'
-      : `Send to ${connector === 'hubspot' ? 'HubSpot' : 'Pipedrive'}`;
-
-  /* ------------ UI --------------- */
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 space-y-6">
-        {/* STEP 1 – Connect */}
-        {status !== 'connected' ? (
-          <>
-            <h2 className="text-xl font-semibold text-gray-800">
-              Connect your CRM
-            </h2>
+    <main className="min-h-screen flex flex-col items-center py-20 px-4">
+      {/* ----- CONNECT STEP ----- */}
+      {!crm ? (
+        <div className="w-full max-w-lg space-y-6 text-center">
+          <h1 className="text-2xl font-semibold">Connect your CRM</h1>
 
-            <button
-              onClick={() => connect('hubspot')}
-              disabled={status === 'connecting'}
-              className="w-full flex justify-center items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg transition"
-            >
-              {status === 'connecting' && connector === 'hubspot' && Spinner}
-              Connect HubSpot
-            </button>
+          <button
+            onClick={() => connect('hubspot')}
+            disabled={connecting}
+            className="w-full py-3 rounded-lg flex justify-center items-center
+                       font-medium text-white bg-orange-600 hover:bg-orange-700
+                       disabled:opacity-60 transition"
+          >
+            {connecting && Spinner}Connect HubSpot
+          </button>
 
+          <button
+            onClick={() => connect('pipedrive')}
+            disabled={connecting}
+            className="w-full py-3 rounded-lg flex justify-center items-center
+                       font-medium text-white bg-green-600 hover:bg-green-700
+                       disabled:opacity-60 transition"
+          >
+            {connecting && Spinner}Connect Pipedrive
+          </button>
+        </div>
+      ) : (
+        /* ----- FORM STEP ----- */
+        <div className="w-full max-w-lg space-y-6">
+          <p className="text-emerald-700">
+            Connected to {crm}. Enter contact details:
+          </p>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="bg-gray-50 rounded-xl shadow p-6 space-y-5"
+          >
+            {/* Inputs */}
+            <div>
+              <input
+                {...register('name')}
+                placeholder="Full name*"
+                className="input"
+              />
+              <p className="error">{errors.name?.message}</p>
+            </div>
+
+            <div>
+              <input
+                {...register('email')}
+                placeholder="Email*"
+                className="input"
+              />
+              <p className="error">{errors.email?.message}</p>
+            </div>
+
+            <input
+              {...register('phone')}
+              placeholder="Phone"
+              className="input"
+            />
+
+            <div>
+              <input
+                {...register('company')}
+                placeholder="Company*"
+                className="input"
+              />
+              <p className="error">{errors.company?.message}</p>
+            </div>
+
+            <input
+              {...register('pronouns')}
+              placeholder="Pronouns"
+              className="input"
+            />
+
+            {/* Submit */}
             <button
-              onClick={() => connect('pipedrive')}
-              disabled={status === 'connecting'}
-              className="w-full flex justify-center items-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition"
+              type="submit"
+              disabled={sending}
+              className="w-full py-3 rounded-lg flex justify-center items-center
+                         font-medium text-white bg-blue-600 hover:bg-blue-700
+                         disabled:opacity-60 transition"
             >
-              {status === 'connecting' && connector === 'pipedrive' && Spinner}
-              Connect Pipedrive
+              {sending && Spinner}
+              {sending
+                ? 'Sending…'
+                : `Send to ${crm === 'hubspot' ? 'HubSpot' : 'Pipedrive'}`}
             </button>
-          </>
-        ) : (
-          /* STEP 2 – Form */
-          <>
-            <p className="text-emerald-700 font-medium">
-              Connected to {connector}. Enter contact details:
+          </form>
+        </div>
+      )}
+
+      {/* ----- RESULT ----- */}
+      {runJson && (
+        <div className="w-full max-w-lg mt-10">
+          <div className="bg-gray-100 p-4 rounded-xl text-sm shadow-inner">
+            <p className="mb-2 font-medium">
+              Job queued — runId: {runJson.runId || runJson.id}
             </p>
-
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4 text-sm"
-            >
-              <div>
-                <input
-                  className="input"
-                  placeholder="Full name*"
-                  {...register('name')}
-                />
-                <p className="error">{errors.name?.message}</p>
-              </div>
-
-              <div>
-                <input
-                  className="input"
-                  placeholder="Email*"
-                  {...register('email')}
-                />
-                <p className="error">{errors.email?.message}</p>
-              </div>
-
-              <input
-                className="input"
-                placeholder="Phone"
-                {...register('phone')}
-              />
-
-              <div>
-                <input
-                  className="input"
-                  placeholder="Company*"
-                  {...register('company')}
-                />
-                <p className="error">{errors.company?.message}</p>
-              </div>
-
-              <input
-                className="input"
-                placeholder="Pronouns"
-                {...register('pronouns')}
-              />
-
-              <button
-                type="submit"
-                disabled={running}
-                className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white py-2 rounded-lg transition"
-              >
-                {running && Spinner}
-                {sendLabel}
-              </button>
-            </form>
-          </>
-        )}
-
-        {/* STEP 3 – Result */}
-        {(runId || link) && (
-          <div className="bg-gray-100 p-4 rounded-lg space-y-2 text-sm">
-            {runId && (
-              <p>
-                <span className="font-medium">Run ID:</span> {runId}
-              </p>
-            )}
-            {link && (
-              <a
-                href={link}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-700 underline"
-              >
-                View contact ↗
-              </a>
-            )}
+            <details className="whitespace-pre-wrap break-all">
+              <summary className="cursor-pointer text-blue-700">
+                View raw response
+              </summary>
+              {JSON.stringify(runJson, null, 2)}
+            </details>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Tailwind “input” & “error” shorthand */}
+      {/* utility classes */}
       <style jsx>{`
         .input {
-          @apply w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 transition;
+          @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2
+            focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none;
         }
         .error {
           @apply text-red-600 mt-1;
