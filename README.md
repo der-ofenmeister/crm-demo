@@ -23,7 +23,7 @@ Before you begin, ensure you have:
 
 ## Environment Setup
 
-Create a `.env.local` file in the root directory with the following variables:
+Create a `.env.local` file in the root directory with the following variables (get them from the IntApp dashboard):
 
 ```env
 INT_APP_WORKSPACE_KEY=your_workspace_key
@@ -67,7 +67,7 @@ src/
 │   ├── layout.tsx      # Root layout with Integration.app setup
 │   └── globals.css     # Global styles
 ├── components/         # React components
-│   └── IntegrationWrapper.tsx
+│   └── IntegrationWrapper.tsx  # Wrapper HoC for  IntApp
 └── lib/               # Utility functions
     └── intapp-token.ts # JWT token generation
 ```
