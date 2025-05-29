@@ -115,4 +115,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Integration.app for providing the integration platform
 - Next.js team for the amazing framework
-- All contributors who have helped shape this project
+- Tailwind for (theoretically) making CSS easier
