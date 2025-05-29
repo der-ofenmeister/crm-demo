@@ -1,5 +1,5 @@
-// postcss.config.js  (CommonJS works fine with Turbopack)
-module.exports = {
+// postcss.config.mjs  (ECMAScript module)
+export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
