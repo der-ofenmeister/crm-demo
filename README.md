@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CRM Integration Demo
 
-## Getting Started
+A modern, user-friendly demo application that showcases seamless integration with popular CRM platforms (HubSpot and Pipedrive) using Integration.app. This demo allows users to create contacts in their preferred CRM system through a beautiful, responsive interface.
 
-First, run the development server:
+## Features
 
+- 🔌 Easy CRM connection with HubSpot and Pipedrive
+- 📝 Modern form interface with real-time validation
+- 🎨 Beautiful UI with smooth animations and transitions
+- 🔒 Secure integration using JWT authentication
+- 📱 Fully responsive design
+- ⚡ Built with Next.js 15 and React 19
+- 🎯 TypeScript for type safety
+- 🎨 Tailwind CSS for styling (currently not working as expected)
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Node.js installed (version 18 or higher)
+- An Integration.app account with workspace credentials
+- HubSpot and/or Pipedrive account (for testing)
+
+## Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+INT_APP_WORKSPACE_KEY=your_workspace_key
+INT_APP_WORKSPACE_SECRET=your_workspace_secret
+```
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd crm-demo
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                 # Next.js app directory
+│   ├── page.tsx        # Main application page
+│   ├── layout.tsx      # Root layout with Integration.app setup
+│   └── globals.css     # Global styles
+├── components/         # React components
+│   └── IntegrationWrapper.tsx
+└── lib/               # Utility functions
+    └── intapp-token.ts # JWT token generation
+```
 
-## Learn More
+## Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js](https://nextjs.org/) - React framework
+- [Integration.app](https://integration.app/) - CRM integration platform
+- [React Hook Form](https://react-hook-form.com/) - Form handling
+- [Zod](https://zod.dev/) - Schema validation
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The project uses several modern development tools:
 
-## Deploy on Vercel
+- ESLint for code linting
+- TypeScript for type checking
+- Tailwind CSS for styling
+- Next.js for server-side rendering and routing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application can be deployed to any platform that supports Next.js applications. The easiest way is to use Vercel:
+
+1. Push your code to a Git repository
+2. Import the project in Vercel
+3. Add your environment variables
+4. Deploy!
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Integration.app for providing the integration platform
+- Next.js team for the amazing framework
+- All contributors who have helped shape this project
