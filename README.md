@@ -67,7 +67,7 @@ src/
 │   ├── layout.tsx      # Root layout with Integration.app setup
 │   └── globals.css     # Global styles
 ├── components/         # React components
-│   └── IntegrationWrapper.tsx  # Wrapper HoC for  IntApp
+│   └── IntegrationWrapper.tsx  # Wrapper HoC for IntApp
 └── lib/               # Utility functions
     └── intapp-token.ts # JWT token generation
 ```
