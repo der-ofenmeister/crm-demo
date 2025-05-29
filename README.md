@@ -75,7 +75,7 @@ src/
 ## Technologies Used
 
 - [Next.js](https://nextjs.org/) - React framework
-- [Integration.app](https://integration.app/) - CRM integration platform
+- [Integration.app](https://integration.app/) - SaaS integrations-as-a-service
 - [React Hook Form](https://react-hook-form.com/) - Form handling
 - [Zod](https://zod.dev/) - Schema validation
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
