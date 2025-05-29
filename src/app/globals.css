@@ -1,9 +1,8 @@
-/* Tailwind layers ─────────────────────────────────────────── */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Light / dark colour tokens ─────────────────────────────── */
+/* light / dark tokens (keep whatever you already had) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,19 +22,6 @@
   }
 }
 
-/* Custom component classes (Tailwind’s @apply is valid here) */
-@layer components {
-  .input {
-    @apply w-full rounded border border-gray-300 bg-white px-3 py-2
-            focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none;
-  }
-
-  .error {
-    @apply text-red-600 mt-1;
-  }
-}
-
-/* Base body styles ────────────────────────────────────────── */
 body {
   background: var(--background);
   color: var(--foreground);

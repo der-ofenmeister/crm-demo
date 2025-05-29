@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useIntegrationApp } from "@integration-app/react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
-/* ---------- validation schema ---------- */
+/* --- validation schema --- */
 const schema = z.object({
     name: z.string().min(3, "Name is required"),
     email: z.string().email(),
@@ -16,7 +16,7 @@ const schema = z.object({
     pronouns: z.string().max(30).optional(),
 });
 type FormVals = z.infer<typeof schema>;
-/* --------------------------------------- */
+/* ------------------------- */
 
 export default function Home() {
     const intApp = useIntegrationApp();
@@ -33,7 +33,7 @@ export default function Home() {
         formState: { errors },
     } = useForm<FormVals>({ resolver: zodResolver(schema) });
 
-    /* ----- Connect CRM ----- */
+    /* connect CRM */
     const connect = async (key: "hubspot" | "pipedrive") => {
         setConnecting(true);
         setCrm(key);
@@ -46,7 +46,7 @@ export default function Home() {
         }
     };
 
-    /* ----- Submit form ----- */
+    /* submit form */
     const onSubmit = async (data: FormVals) => {
         if (!crm) return alert("Connect a CRM first");
         setSending(true);
@@ -73,7 +73,7 @@ export default function Home() {
 
     return (
         <main className="min-h-screen flex flex-col items-center py-20 px-4">
-            {/* ---------- CONNECT STEP ---------- */}
+            {/* CONNECT STEP */}
             {!crm ? (
                 <div className="w-full max-w-lg space-y-6 text-center">
                     <h1 className="text-2xl font-semibold">Connect your CRM</h1>
@@ -81,7 +81,7 @@ export default function Home() {
                     <button
                         onClick={() => connect("hubspot")}
                         disabled={connecting}
-                        className="w-full py-3 rounded flex justify-center items-center
+                        className="w-full py-3 rounded-md flex justify-center items-center
                        font-medium text-white bg-orange-600 hover:bg-orange-700
                        disabled:opacity-60 transition"
                     >
@@ -91,7 +91,7 @@ export default function Home() {
                     <button
                         onClick={() => connect("pipedrive")}
                         disabled={connecting}
-                        className="w-full py-3 rounded flex justify-center items-center
+                        className="w-full py-3 rounded-md flex justify-center items-center
                        font-medium text-white bg-green-600 hover:bg-green-700
                        disabled:opacity-60 transition"
                     >
@@ -99,7 +99,7 @@ export default function Home() {
                     </button>
                 </div>
             ) : (
-                /* ---------- FORM STEP ---------- */
+                /* FORM STEP */
                 <div className="w-full max-w-lg space-y-6">
                     <p className="text-emerald-700">
                         Connected to {crm}. Enter contact details:
@@ -113,45 +113,56 @@ export default function Home() {
                             <input
                                 {...register("name")}
                                 placeholder="Full name*"
-                                className="input"
+                                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2
+                           focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
                             />
-                            <p className="error">{errors.name?.message}</p>
+                            <p className="text-red-600 mt-1">
+                                {errors.name?.message}
+                            </p>
                         </div>
 
                         <div>
                             <input
                                 {...register("email")}
                                 placeholder="Email*"
-                                className="input"
+                                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2
+                           focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
                             />
-                            <p className="error">{errors.email?.message}</p>
+                            <p className="text-red-600 mt-1">
+                                {errors.email?.message}
+                            </p>
                         </div>
 
                         <input
                             {...register("phone")}
                             placeholder="Phone"
-                            className="input"
+                            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
                         />
 
                         <div>
                             <input
                                 {...register("company")}
                                 placeholder="Company*"
-                                className="input"
+                                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2
+                           focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
                             />
-                            <p className="error">{errors.company?.message}</p>
+                            <p className="text-red-600 mt-1">
+                                {errors.company?.message}
+                            </p>
                         </div>
 
                         <input
                             {...register("pronouns")}
                             placeholder="Pronouns"
-                            className="input"
+                            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
                         />
 
                         <button
                             type="submit"
                             disabled={sending}
-                            className="w-full py-3 rounded flex justify-center items-center
+                            className="w-full py-3 rounded-md flex justify-center items-center
                          font-medium text-white bg-blue-600 hover:bg-blue-700
                          disabled:opacity-60 transition"
                         >
@@ -168,7 +179,7 @@ export default function Home() {
                 </div>
             )}
 
-            {/* ---------- RESULT PANEL ---------- */}
+            {/* RESULT PANEL */}
             {runJson && (
                 <div className="w-full max-w-lg mt-10">
                     <div className="bg-gray-100 p-4 rounded-xl text-sm shadow-inner">
