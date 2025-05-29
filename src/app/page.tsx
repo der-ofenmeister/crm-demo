@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useIntegrationApp } from "@integration-app/react";
-import { IntegrationAppClient } from '@integration-app/sdk'
+import { IntegrationAppClient } from "@integration-app/sdk";
 
 // ------------- zod guard for the form -------------
 const schema = z.object({
@@ -19,7 +19,7 @@ type FormVals = z.infer<typeof schema>;
 // --------------------------------------------------
 
 export default function Home() {
-    const integrationApp = useIntegrationApp(); 
+    const integrationApp = useIntegrationApp();
     const [connector, setConnector] = useState<"hubspot" | "pipedrive" | null>(
         null
     );
