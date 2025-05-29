@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.0.1",
     "@integration-app/react": "^2.15.0",
     "@integration-app/sdk": "^1.11.4",
