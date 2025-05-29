@@ -24,7 +24,7 @@ export default function Home() {
     const [crm, setCrm] = useState<"hubspot" | "pipedrive" | null>(null);
     const [connecting, setConnecting] = useState(false);
     const [sending, setSending] = useState(false);
-    // @ts-ignore
+    // @ts-expect-error - runJson is not typed
     const [runJson, setRunJson] = useState<any | null>(null);
 
     const {
@@ -61,7 +61,7 @@ export default function Home() {
                 });
             setRunJson(res);
             reset();
-            // @ts-ignore
+            // @ts-expect-error - runJson is not typed
         } catch (e: any) {
             alert(e.message ?? "Error");
         } finally {
