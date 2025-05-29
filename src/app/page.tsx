@@ -24,6 +24,7 @@ export default function Home() {
     const [crm, setCrm] = useState<"hubspot" | "pipedrive" | null>(null);
     const [connecting, setConnecting] = useState(false);
     const [sending, setSending] = useState(false);
+    // @ts-ignore
     const [runJson, setRunJson] = useState<any | null>(null);
 
     const {
@@ -60,6 +61,7 @@ export default function Home() {
                 });
             setRunJson(res);
             reset();
+            // @ts-ignore
         } catch (e: any) {
             alert(e.message ?? "Error");
         } finally {
@@ -67,18 +69,18 @@ export default function Home() {
         }
     };
 
-    const Spinner = (
-        <ArrowPathIcon className="h-5 w-5 animate-spin mr-2 shrink-0" />
-    );
-
     return (
         <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col items-center py-20 px-4">
             {/* CONNECT STEP */}
             {!crm ? (
                 <div className="w-full max-w-lg space-y-8">
                     <div className="text-center">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-4">Connect your CRM</h1>
-                        <p className="text-gray-600 text-lg">Choose your preferred CRM platform to get started</p>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                            Connect your CRM
+                        </h1>
+                        <p className="text-gray-600 text-lg">
+                            Choose your preferred CRM platform to get started
+                        </p>
                     </div>
 
                     <div className="space-y-4">
@@ -92,7 +94,9 @@ export default function Home() {
                            transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-2xl
                            border-2 border-orange-400 hover:border-orange-500"
                         >
-                            {connecting && <ArrowPathIcon className="h-6 w-6 animate-spin mr-3 shrink-0" />}
+                            {connecting && (
+                                <ArrowPathIcon className="h-6 w-6 animate-spin mr-3 shrink-0" />
+                            )}
                             <span className="text-lg">🧡 Connect HubSpot</span>
                         </button>
 
@@ -106,8 +110,12 @@ export default function Home() {
                            transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-2xl
                            border-2 border-green-400 hover:border-green-500"
                         >
-                            {connecting && <ArrowPathIcon className="h-6 w-6 animate-spin mr-3 shrink-0" />}
-                            <span className="text-lg">💚 Connect Pipedrive</span>
+                            {connecting && (
+                                <ArrowPathIcon className="h-6 w-6 animate-spin mr-3 shrink-0" />
+                            )}
+                            <span className="text-lg">
+                                💚 Connect Pipedrive
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -115,22 +123,28 @@ export default function Home() {
                 /* FORM STEP */
                 <div className="w-full max-w-lg space-y-8">
                     <div className="text-center">
-                        <div className={`inline-flex items-center px-6 py-3 rounded-full font-bold text-white shadow-lg ${
-                            crm === "hubspot" 
-                                ? "bg-gradient-to-r from-orange-500 to-orange-600" 
-                                : "bg-gradient-to-r from-green-500 to-green-600"
-                        }`}>
+                        <div
+                            className={`inline-flex items-center px-6 py-3 rounded-full font-bold text-white shadow-lg ${
+                                crm === "hubspot"
+                                    ? "bg-gradient-to-r from-orange-500 to-orange-600"
+                                    : "bg-gradient-to-r from-green-500 to-green-600"
+                            }`}
+                        >
                             <span className="text-2xl mr-2">✓</span>
-                            Connected to {crm === "hubspot" ? "HubSpot" : "Pipedrive"}
+                            Connected to{" "}
+                            {crm === "hubspot" ? "HubSpot" : "Pipedrive"}
                         </div>
-                        <p className="mt-6 text-gray-700 text-lg font-medium">Enter contact details below:</p>
+                        <p className="mt-6 text-gray-700 text-lg font-medium">
+                            Enter contact details below:
+                        </p>
                     </div>
 
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="bg-white rounded-3xl shadow-2xl p-10 space-y-8 border border-gray-200 backdrop-blur-sm"
                         style={{
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(249,250,251,0.9) 100%)'
+                            background:
+                                "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(249,250,251,0.9) 100%)",
                         }}
                     >
                         <div className="space-y-6">
@@ -232,11 +246,17 @@ export default function Home() {
                                  : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border-green-400 hover:border-green-500"
                          }`}
                         >
-                            {sending && <ArrowPathIcon className="h-6 w-6 animate-spin mr-3 shrink-0" />}
+                            {sending && (
+                                <ArrowPathIcon className="h-6 w-6 animate-spin mr-3 shrink-0" />
+                            )}
                             <span>
                                 {sending
                                     ? "Sending to CRM..."
-                                    : `Send to ${crm === "hubspot" ? "HubSpot" : "Pipedrive"}`}
+                                    : `Send to ${
+                                          crm === "hubspot"
+                                              ? "HubSpot"
+                                              : "Pipedrive"
+                                      }`}
                             </span>
                         </button>
                     </form>
@@ -249,10 +269,14 @@ export default function Home() {
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 p-8 rounded-3xl shadow-2xl">
                         <div className="flex items-center mb-6">
                             <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                                <span className="text-white font-bold text-xl">✓</span>
+                                <span className="text-white font-bold text-xl">
+                                    ✓
+                                </span>
                             </div>
                             <div>
-                                <h3 className="font-bold text-green-800 text-xl">Contact Created Successfully!</h3>
+                                <h3 className="font-bold text-green-800 text-xl">
+                                    Contact Created Successfully!
+                                </h3>
                                 <p className="text-green-600 font-medium">
                                     Run ID: {runJson.runId || runJson.id}
                                 </p>
